@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lista de Tarefas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f4f4f4;
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      padding: 0.5rem;
+      background: white;
+      margin-bottom: 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    li.concluida {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .prioridade {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    button {
+      margin-left: 0.5rem;
+    }
+    .input-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .acoes {
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lista de Tarefas</h1>
+
+  <div class="input-group">
+    <label for="descricao">Descrição da tarefa:</label>
+    <input type="text" id="descricao" />
+  </div>
+  <div class="input-group">
+    <label for="prioridade">Prioridade:</label>
+    <select id="prioridade">
+      <option value="baixa">Baixa</option>
+      <option value="media" selected>Média</option>
+      <option value="alta">Alta</option>
+    </select>
+  </div>
+  <div class="acoes">
+    <button id="btnAdicionar">Adicionar tarefa</button>
+  </div>
+
+  <h2>Tarefas</h2>
+  <ul id="listaTarefas">
+    <!-- tarefas vão aparecer aqui -->
+  </ul>
+
+  <script>
+    const tarefas = [];
+
+    const descricaoInput = document.getElementById('descricao');
+    const prioridadeSelect = document.getElementById('prioridade');
+    const listaTarefas = document.getElementById('listaTarefas');
+    const btnAdicionar = document.getElementById('btnAdicionar');
+
+    function renderizarTarefas() {
+      listaTarefas.innerHTML = '';
+      tarefas.forEach((tarefa, index) => {
+        const li = document.createElement('li');
+        li.className = tarefa.concluida ? 'concluida' : '';
+
+        li.innerHTML = `
+          <span>
+            ${tarefa.descricao} 
+            <span class="prioridade">(${tarefa.prioridade})</span>
+          </span>
+          <span>
+            <button onclick="marcarConcluida(${index})">
+              ${tarefa.concluida ? 'Desmarcar' : 'Concluir'}
+            </button>
+            <button onclick="removerTarefa(${index})">Remover</button>
+          </span>
+        `;
+
+        listaTarefas.appendChild(li);
+      });
+    }
+
+    function adicionarTarefa() {
+      const descricao = descricaoInput.value.trim();
+      const prioridade = prioridadeSelect.value;
+
+      if (!descricao) {
+        alert('Digite a descrição da tarefa!');
+        return;
+      }
+
+      tarefas.push({
+        descricao,
+        prioridade,
+        concluida: false
+      });
+
+      descricaoInput.value = '';
+      prioridadeSelect.value = 'media';
+
+      renderizarTarefas();
+    }
+
+    function marcarConcluida(index) {
+      tarefas[index].concluida = !tarefas[index].concluida;
+      renderizarTarefas();
+    }
+
+    function removerTarefa(index) {
+      tarefas.splice(index, 1);
+      renderizarTarefas();
+    }
+
+    btnAdicionar.addEventListener('click', adicionarTarefa);
+
+    renderizarTarefas();
+  </script>
+</body>
+</html>
