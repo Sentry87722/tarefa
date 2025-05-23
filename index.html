@@ -2,25 +2,128 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Lista de Tarefas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Lista de Tarefas</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
-    .tarefa { margin: 5px 0; padding: 10px; background: white; border: 1px solid #ccc; border-radius: 5px; }
-    .concluida { text-decoration: line-through; color: gray; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2f3e46;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form input, .form select, .form button {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .form input:focus, .form select:focus {
+      border-color: #468faf;
+    }
+
+    .form button {
+      background-color: #468faf;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .form button:hover {
+      background-color: #356c8d;
+    }
+
+    .tarefa {
+      background-color: #f7f9fb;
+      border: 1px solid #dbe2e8;
+      border-left: 6px solid #468faf;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+
+    .tarefa:hover {
+      transform: scale(1.02);
+    }
+
+    .tarefa.concluida {
+      text-decoration: line-through;
+      color: gray;
+      opacity: 0.6;
+    }
+
+    .acoes button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 10px;
+    }
+
+    .acoes button:hover {
+      color: #2c7da0;
+    }
+
+    @media (max-width: 500px) {
+      .form {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Lista de Tarefas</h1>
-
-  <input type="text" id="descricao" placeholder="Descrição da tarefa" />
-  <select id="prioridade">
-    <option value="baixa">Baixa</option>
-    <option value="media">Média</option>
-    <option value="alta">Alta</option>
-  </select>
-  <button onclick="adicionarTarefa()">Adicionar</button>
-
-  <div id="lista"></div>
+  <div class="container">
+    <h1>Minha Lista de Tarefas</h1>
+    <div class="form">
+      <input type="text" id="descricao" placeholder="Nova tarefa" />
+      <select id="prioridade">
+        <option value="baixa">Baixa</option>
+        <option value="media">Média</option>
+        <option value="alta">Alta</option>
+      </select>
+      <button onclick="adicionarTarefa()">Adicionar</button>
+    </div>
+    <div id="lista"></div>
+  </div>
 
   <script>
     let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
@@ -34,17 +137,28 @@
       lista.innerHTML = "";
 
       if (tarefas.length === 0) {
-        lista.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
+        lista.innerHTML = "<p style='text-align:center; color:gray;'>Nenhuma tarefa cadastrada.</p>";
         return;
       }
 
       tarefas.forEach((t, i) => {
         const div = document.createElement("div");
         div.className = "tarefa" + (t.concluida ? " concluida" : "");
+
+        const prioridadeCor = {
+          baixa: "#ced4da",
+          media: "#ffb703",
+          alta: "#d90429"
+        }[t.prioridade];
+
+        div.style.borderLeftColor = prioridadeCor;
+
         div.innerHTML = `
-          <strong>${i + 1}.</strong> ${t.descricao} (${t.prioridade})
-          <button onclick="concluir(${i})">✔️</button>
-          <button onclick="remover(${i})">🗑️</button>
+          <span>${t.descricao} (${t.prioridade})</span>
+          <div class="acoes">
+            <button title="Concluir" onclick="concluir(${i})">✔️</button>
+            <button title="Remover" onclick="remover(${i})">🗑️</button>
+          </div>
         `;
         lista.appendChild(div);
       });
@@ -55,7 +169,7 @@
       const prioridade = document.getElementById("prioridade").value;
 
       if (!descricao) {
-        alert("Descrição não pode estar vazia!");
+        alert("Digite a descrição da tarefa!");
         return;
       }
 
