@@ -1,0 +1,23 @@
+.container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+#lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 20px;
+}
+#lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 20px;
+}
+.tarefa {
+  width: 200px;
+  height: auto;
+}
